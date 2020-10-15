@@ -174,6 +174,12 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 				System.out.println(reader.readUTF());
 
 				socket.close();
+				
+				File directorio = new File("src/Compartida"); //Ruta de la carpeta con archivos
+				String archivos[]=directorio.list(); //aca cargas todos los nombres de los archivos
+
+				for(int i=0; i<archivos.length;i++)
+				   System.out.println(archivos[i]);
 
 			} catch (IOException e) {
 

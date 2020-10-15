@@ -73,7 +73,7 @@ public class Servidor {
 				            writer.println("PUERTO: " +PUERTO);
 				            writer.close();
 				            
-				            
+				           
 						
 			        }
 					
