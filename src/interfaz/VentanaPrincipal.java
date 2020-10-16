@@ -21,15 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Scanner;
+
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 
 public class VentanaPrincipal extends JFrame implements ActionListener {
@@ -38,11 +34,13 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 	private JTextField txtIpCliente;
 	private JTextField txtPuerto;
 	private JTextField txtNombreCliente;
-	private JButton btnServidorOn;
 	private JButton btnEnviar;
 	private JButton btnRegistrarCliente;
-	private JButton btnServidorOf;
 	private Servidor servidor;
+	private JFileChooser chooser;
+	private JButton btnSubirArchivo;
+	private JComboBox cmbOrigen ,  cmbOrigen_1;
+	private String ruta ,  nombreArchivo;
 
 	/**
 	 * Launch the application.
@@ -66,40 +64,32 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 	public VentanaPrincipal() {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 551, 563);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		btnServidorOn = new JButton("Iniciar Servidor");
-		btnServidorOn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnServidorOn.setBounds(111, 227, 124, 23);
-		contentPane.add(btnServidorOn);
-		btnServidorOn.addActionListener(this);
-
 		JLabel lblOrigen = new JLabel("Origen");
-		lblOrigen.setBounds(85, 117, 46, 14);
+		lblOrigen.setBounds(90, 409, 46, 14);
 		contentPane.add(lblOrigen);
 
 		JLabel lblDestino = new JLabel("Destino");
-		lblDestino.setBounds(318, 117, 46, 14);
+		lblDestino.setBounds(378, 366, 46, 14);
 		contentPane.add(lblDestino);
 
-		JComboBox cmbOrigen = new JComboBox();
-		cmbOrigen.setBounds(58, 142, 98, 22);
+		 cmbOrigen = new JComboBox();
+		cmbOrigen.setBounds(57, 434, 98, 22);
 		contentPane.add(cmbOrigen);
 
 		JComboBox cmbDestino = new JComboBox();
-		cmbDestino.setBounds(297, 142, 98, 22);
+		cmbDestino.addItem("Descargas");
+		cmbDestino.setBounds(355, 434, 98, 22);
 		contentPane.add(cmbDestino);
 
 		btnEnviar = new JButton("Enviar");
 		btnEnviar.addActionListener(this);
-		btnEnviar.setBounds(180, 142, 89, 23);
+		btnEnviar.setBounds(200, 434, 89, 23);
 		contentPane.add(btnEnviar);
 
 		JLabel lblNewLabel = new JLabel("IP Cliente");
@@ -132,30 +122,35 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		txtNombreCliente.setBounds(121, 8, 119, 20);
 		contentPane.add(txtNombreCliente);
 
+		chooser = new JFileChooser();
+
 		btnRegistrarCliente = new JButton("Registrar Cliente");
 		btnRegistrarCliente.addActionListener(this);
 		btnRegistrarCliente.setBounds(151, 64, 184, 23);
 		contentPane.add(btnRegistrarCliente);
 
 		JLabel lblNewLabel_2 = new JLabel("Transferencia de archivos");
-		lblNewLabel_2.setBounds(175, 98, 139, 14);
+		lblNewLabel_2.setBounds(174, 366, 139, 14);
 		contentPane.add(lblNewLabel_2);
 
-		btnServidorOf = new JButton("Detener Servidor");
-		btnServidorOf.setBounds(244, 227, 120, 23);
-		contentPane.add(btnServidorOf);
+		JLabel lblNewLabel_3 = new JLabel("Cliente");
+		lblNewLabel_3.setBounds(38, 107, 46, 14);
+		contentPane.add(lblNewLabel_3);
+
+		cmbOrigen_1 = new JComboBox();
+		cmbOrigen_1.setBounds(87, 103, 98, 22);
+		contentPane.add(cmbOrigen_1);
+
+		btnSubirArchivo = new JButton("Subir Archivo");
+		btnSubirArchivo.addActionListener(this);
+		btnSubirArchivo.setBounds(245, 103, 89, 23);
+		contentPane.add(btnSubirArchivo);
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
 
-		if (ev.getSource() == btnServidorOn) {
-
-		}
-		if (ev.getSource() == btnServidorOf) {
-			servidor = null;
-		}
 		if (ev.getSource() == btnRegistrarCliente) {
 			final String HOST = "localhost";
 			final int PUERTO = Integer.parseInt(txtPuerto.getText().toString());
@@ -175,27 +170,40 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 
 				socket.close();
 				
-				File directorio = new File("src/Compartida"); //Ruta de la carpeta con archivos
-				String archivos[]=directorio.list(); //aca cargas todos los nombres de los archivos
+				cmbOrigen.addItem(name);
+				cmbOrigen_1.addItem(name);
+/*
+				File directorio = new File("src/Compartida"); // Ruta de la carpeta con archivos
+				String archivos[] = directorio.list(); // aca cargas todos los nombres de los archivos
 
-				for(int i=0; i<archivos.length;i++)
-				   System.out.println(archivos[i]);
-
+				for (int i = 0; i < archivos.length; i++)
+					
+*/
 			} catch (IOException e) {
 
 				e.printStackTrace();
 			}
-			
-			
 
-			
 		}
-		if(ev.getSource() == btnEnviar) {
-			
-			File archivoOriginal = new File("src/Compartida/Manuel.txt");
-			File archivoCopia = new File("src/Descargas/Manuel.txt");
+		if (ev.getSource() == btnSubirArchivo) {
+			int seleccion = chooser.showOpenDialog(contentPane);
+			if (seleccion == JFileChooser.APPROVE_OPTION) {
+				File fichero = chooser.getSelectedFile();
+				 ruta = fichero.getAbsolutePath();
+				
+				String[] secciones = ruta.split("\\\\");
+				
+				 nombreArchivo = secciones[secciones.length - 1];
+				File fileTmp = new File("src/" + cmbOrigen_1.getSelectedItem().toString() +"/"+ nombreArchivo);
+				pasarArchivos(fichero, fileTmp);
+			}
+		}
+		if (ev.getSource() == btnEnviar) {
 
-			if(!archivoOriginal.exists()) {
+			File archivoOriginal = new File(ruta);
+			File archivoCopia = new File("src/Descargas/" + nombreArchivo);
+
+			if (!archivoOriginal.exists()) {
 				System.out.println("original no existe|| Entro");
 				return;
 			}
@@ -203,27 +211,35 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 				try {
 					System.out.println("copia no existe|| Entro");
 					archivoCopia.createNewFile();
+					pasarArchivos(archivoOriginal, archivoCopia);
 
-					InputStream inputStream = null;
-					OutputStream outputStream = null;
-
-					inputStream = new FileInputStream(archivoOriginal);
-					outputStream = new FileOutputStream(archivoCopia);
-					byte[] buffer = new byte[1024];
-					int length;
-					while ((length = inputStream.read(buffer)) > 0) {
-						outputStream.write(buffer, 0, length);
-					}
-					inputStream.close();
-					outputStream.close();
-					System.out.println("Archivo descargado.");
 				} catch (Exception e) {
-					
+
 				}
 
-			}else {
+			} else {
 				System.out.println("No se pudo enviar los archivos");
 			}
+		}
+
+	}
+
+	private static void pasarArchivos(File archivoOriginal, File archivoCopia) {
+		InputStream inputStream = null;
+		OutputStream outputStream = null;
+		try {
+			inputStream = new FileInputStream(archivoOriginal);
+			outputStream = new FileOutputStream(archivoCopia);
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = inputStream.read(buffer)) > 0) {
+				outputStream.write(buffer, 0, length);
+			}
+			inputStream.close();
+			outputStream.close();
+			System.out.println("Archivo descargado.");
+		} catch (Exception e) {
+
 		}
 
 	}

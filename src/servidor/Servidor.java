@@ -62,16 +62,10 @@ public class Servidor {
 					System.out.println("La ip del cliente es: " + (ipClient.getAddress() + "").substring(1));
 					System.out.println("El puerto del cliente es : " + PUERTO);
 					
-					File file = new File("src/Compartida/"+name+".txt");
+					File file = new File("src/"+name);
 					if (!file.exists()) {
 			      
-							file.createNewFile();
-							
-							PrintWriter writer = new PrintWriter("src/Compartida/"+name+".txt", "UTF-8");
-				            writer.println("Cliente: " + name);
-				            writer.println("IP: " + (ipClient.getAddress() + "").substring(1));
-				            writer.println("PUERTO: " +PUERTO);
-				            writer.close();
+						file.mkdir();
 				            
 				           
 						
