@@ -38,8 +38,8 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 	private JButton btnRegistrarCliente;
 	private Servidor servidor;
 	private JFileChooser chooser;
-	private JButton btnSubirArchivo;
-	private JComboBox cmbOrigen ,  cmbOrigen_1;
+	private JButton btnSubirArchivo , btnActualizar;
+	private JComboBox cmbOrigen ,  cmbCliente;
 	private String ruta ,  nombreArchivo;
 
 	/**
@@ -64,32 +64,32 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 	public VentanaPrincipal() {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 551, 563);
+		setBounds(100, 100, 499, 361);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		JLabel lblOrigen = new JLabel("Origen");
-		lblOrigen.setBounds(90, 409, 46, 14);
+		lblOrigen.setBounds(84, 226, 46, 14);
 		contentPane.add(lblOrigen);
 
 		JLabel lblDestino = new JLabel("Destino");
-		lblDestino.setBounds(378, 366, 46, 14);
+		lblDestino.setBounds(366, 226, 46, 14);
 		contentPane.add(lblDestino);
 
 		 cmbOrigen = new JComboBox();
-		cmbOrigen.setBounds(57, 434, 98, 22);
+		cmbOrigen.setBounds(31, 251, 145, 22);
 		contentPane.add(cmbOrigen);
 
 		JComboBox cmbDestino = new JComboBox();
 		cmbDestino.addItem("Descargas");
-		cmbDestino.setBounds(355, 434, 98, 22);
+		cmbDestino.setBounds(335, 251, 98, 22);
 		contentPane.add(cmbDestino);
 
 		btnEnviar = new JButton("Enviar");
 		btnEnviar.addActionListener(this);
-		btnEnviar.setBounds(200, 434, 89, 23);
+		btnEnviar.setBounds(210, 251, 89, 23);
 		contentPane.add(btnEnviar);
 
 		JLabel lblNewLabel = new JLabel("IP Cliente");
@@ -109,6 +109,9 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		txtIpCliente.setColumns(10);
 
 		txtPuerto = new JTextField();
+		txtPuerto.setEnabled(false);
+		txtPuerto.setEditable(false);
+		txtPuerto.setText("5000");
 		txtPuerto.setBounds(335, 8, 89, 20);
 		contentPane.add(txtPuerto);
 		txtPuerto.setColumns(10);
@@ -126,25 +129,31 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 
 		btnRegistrarCliente = new JButton("Registrar Cliente");
 		btnRegistrarCliente.addActionListener(this);
-		btnRegistrarCliente.setBounds(151, 64, 184, 23);
+		btnRegistrarCliente.setBounds(169, 64, 184, 23);
 		contentPane.add(btnRegistrarCliente);
 
 		JLabel lblNewLabel_2 = new JLabel("Transferencia de archivos");
-		lblNewLabel_2.setBounds(174, 366, 139, 14);
+		lblNewLabel_2.setBounds(174, 202, 179, 14);
 		contentPane.add(lblNewLabel_2);
 
 		JLabel lblNewLabel_3 = new JLabel("Cliente");
-		lblNewLabel_3.setBounds(38, 107, 46, 14);
+		lblNewLabel_3.setBounds(60, 102, 46, 14);
 		contentPane.add(lblNewLabel_3);
 
-		cmbOrigen_1 = new JComboBox();
-		cmbOrigen_1.setBounds(87, 103, 98, 22);
-		contentPane.add(cmbOrigen_1);
+		cmbCliente = new JComboBox();
+		cmbCliente.setBounds(108, 98, 98, 22);
+	
+		contentPane.add(cmbCliente);
 
 		btnSubirArchivo = new JButton("Subir Archivo");
 		btnSubirArchivo.addActionListener(this);
-		btnSubirArchivo.setBounds(245, 103, 89, 23);
+		btnSubirArchivo.setBounds(288, 103, 179, 23);
 		contentPane.add(btnSubirArchivo);
+		
+		btnActualizar = new JButton("Actualizar");
+		btnActualizar.setBounds(191, 150, 122, 23);
+		btnActualizar.addActionListener(this);
+		contentPane.add(btnActualizar);
 
 	}
 
@@ -170,8 +179,9 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 
 				socket.close();
 				
-				cmbOrigen.addItem(name);
-				cmbOrigen_1.addItem(name);
+				
+				cmbCliente.addItem(name);
+				
 /*
 				File directorio = new File("src/Compartida"); // Ruta de la carpeta con archivos
 				String archivos[] = directorio.list(); // aca cargas todos los nombres de los archivos
@@ -194,14 +204,15 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 				String[] secciones = ruta.split("\\\\");
 				
 				 nombreArchivo = secciones[secciones.length - 1];
-				File fileTmp = new File("src/" + cmbOrigen_1.getSelectedItem().toString() +"/"+ nombreArchivo);
+				File fileTmp = new File("src/" + cmbCliente.getSelectedItem().toString() +"/"+ nombreArchivo);
 				pasarArchivos(fichero, fileTmp);
 			}
 		}
 		if (ev.getSource() == btnEnviar) {
 
-			File archivoOriginal = new File(ruta);
-			File archivoCopia = new File("src/Descargas/" + nombreArchivo);
+			File archivoOriginal = new File("src/"+cmbCliente.getSelectedItem().toString() + "/"+ cmbOrigen.getSelectedItem().toString());
+			
+			File archivoCopia = new File("src/Descargas/" + cmbOrigen.getSelectedItem().toString());
 
 			if (!archivoOriginal.exists()) {
 				System.out.println("original no existe|| Entro");
@@ -219,6 +230,17 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 
 			} else {
 				System.out.println("No se pudo enviar los archivos");
+			}
+		}
+		
+		if(ev.getSource() == btnActualizar) {
+			String seleccionado = cmbCliente.getSelectedItem().toString();
+			File carpeta = new File("src/"+ seleccionado);
+			File[] archivos = carpeta.listFiles();
+			cmbOrigen.removeAllItems();
+			
+			for (int i = 0; i < archivos.length; i++) {
+				cmbOrigen.addItem(archivos[i].getName());
 			}
 		}
 
